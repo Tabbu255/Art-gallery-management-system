@@ -1,0 +1,93 @@
+CREATE TABLE Artists (
+    ArtistID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Biography TEXT,
+    Birthdate DATE,
+    Nationality VARCHAR(255),
+    ContactInfo VARCHAR(255)
+);
+
+CREATE TABLE Artworks (
+    ArtworkID INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL,
+    Description TEXT,
+    CreationDate DATE,
+    Dimensions VARCHAR(255),
+    Price DECIMAL(10, 2),
+    ArtistID INT,
+    FOREIGN KEY (ArtistID) REFERENCES Artists(ArtistID)
+);
+
+CREATE TABLE Exhibitions (
+    ExhibitionID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Location VARCHAR(255),
+    StartDate DATE,
+    EndDate DATE
+);
+
+CREATE TABLE ExhibitionArtworks (
+    ExhibitionID INT,
+    ArtworkID INT,
+    PRIMARY KEY (ExhibitionID, ArtworkID),
+    FOREIGN KEY (ExhibitionID) REFERENCES Exhibitions(ExhibitionID),
+    FOREIGN KEY (ArtworkID) REFERENCES Artworks(ArtworkID)
+);
+
+CREATE TABLE Sales (
+    SaleID INT AUTO_INCREMENT PRIMARY KEY,
+    ArtworkID INT,
+    CustomerID INT,
+    SaleDate DATE,
+    SalePrice DECIMAL(10, 2),
+    FOREIGN KEY (ArtworkID) REFERENCES Artworks(ArtworkID),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+CREATE TABLE Customers (
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Email VARCHAR(255),
+    Phone VARCHAR(50),
+    Address TEXT
+);
+
+#Example Data Insertion
+
+-- Inserting into Artists
+INSERT INTO Artists (Name, Biography, Birthdate, Nationality, ContactInfo)
+VALUES ('Pablo Picasso', 'Spanish painter and sculptor.', '1881-10-25', 'Spanish', 'pablo@example.com');
+
+-- Inserting into Artworks
+INSERT INTO Artworks (Title, Description, CreationDate, Dimensions, Price, ArtistID)
+VALUES ('Les Demoiselles d\'Avignon', 'A large oil painting created in 1907.', '1907-07-01', '243.9 cm × 233.7 cm', 1000000.00, 1);
+
+-- Inserting into Exhibitions
+INSERT INTO Exhibitions (Name, Location, StartDate, EndDate)
+VALUES ('Modern Art Exhibition', 'New York Museum of Modern Art', '2024-06-01', '2024-08-31');
+
+-- Inserting into ExhibitionArtworks
+INSERT INTO ExhibitionArtworks (ExhibitionID, ArtworkID)
+VALUES (1, 1);
+
+-- Inserting into Customers
+INSERT INTO Customers (Name, Email, Phone, Address)
+VALUES ('John Doe', 'john@example.com', '123-456-7890', '123 Main St, Anytown, USA');
+
+-- Inserting into Sales
+INSERT INTO Sales (ArtworkID, CustomerID, SaleDate, SalePrice)
+VALUES (1, 1, '2024-06-15', 1200000.00);
+
+#Get all artworks by a specific artist
+
+SELECT * FROM Artworks WHERE ArtistID = 1;
+
+#Get all artworks in a specific exhibition
+
+SELECT a.* FROM Artworks a
+JOIN ExhibitionArtworks ea ON a.ArtworkID = ea.ArtworkID
+WHERE ea.ExhibitionID = 1;
+
+#Get the total sales amount
+
+SELECT SUM(SalePrice) FROM Sales;
